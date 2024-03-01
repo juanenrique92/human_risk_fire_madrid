@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head> 
+	<meta charset=utf-8>
+	<title>Riesgo de incendio por causalidad Humana en la Comunidad de Madrid</title>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+	
+	
+	<style> 
+		body {
+			padding: 0;
+			margin: 0;
+		}
+		html, body, #map {
+			height: 100%;
+			width: 100%;
+			padding: 0;
+			margin: 0;
+		}
+		.info {
+			padding: 6px 8px;
+			font: 14px/16px Arial, Helvetica, sans-serif;
+			background: white;
+			background: rgba(255,255,255,0.8);
+			box-shadow: 0 0 15px rgba(0,0,0,0.2);
+			border-radius: 5px;
+		}
+		.info h2 {
+			margin: 0 0 5px;
+			color: #777;
+		}
+		.legend {
+			line-height: 18px;
+			color: #555;
+		}
+		.legend I {
+			width: 18px;
+			height: 18px;
+			float: left;
+			margin-right: 8px;
+			opacity: 0.7;
+		}
+</style> 
+</head>  
+	<body>
+	 <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+		<div id ="map"> </div>
+	<script type="text/javascript" src="A3.js.geojson"></script>
+	<script type="text/javascript" src="C5.js.geojson"></script>		
+	<script>
+	var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'});
+	var map = L.map('map', {
+		center: [40.417183, -3.703517],
+		zoom: 9,
+		zoomControl: false,
+		layers: osm,
+		maxZoom: 18,
+		minZoom: 8,
+	});
+	
+	var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+		attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+		dragging: false,
+	}).addTo(map);
+	
+	var C5 = L.geoJson(C5, {
+		style: style,
+		onEachFeature: popup
+	}).addTo(map);
+	
+	var A3 = L.geoJson(A3, {
+		style: style,
+		onEachFeature: popup
+	}).addTo(map);
+	
+	var pnoa = L.tileLayer.wms("http://www.ign.es/wms-inspire/pnoa-ma?SERVICE=WMS&", {
+		layers: "OI.OrthoimageCoverage",
+		format: 'image/jpeg',
+		transparent: true,
+		version: '1.3.0',
+		attribution: "PNOA WMS. Cedido por © Instituto Geográfico Nacional de España"
+	});
+	
+	function getColor(gridcode) {
+		return gridcode == 4 ? '#571845' :
+			gridcode == 3 ? '#c70039' :
+			gridcode == 2 ? '#ff5733' :
+			gridcode == 1 ? '#ffc300' :
+				'#58FA58';
+			}
+	function style(feature) {
+		return {
+		fillColor: getColor(feature.properties.gridcode),
+		weight: 0.5,
+		opacity: 10,
+		color: 'white',
+		fillOpacity: 0.7,
+		};
+	}
+	function popup(feature, layer) {
+		if (feature.properties && feature.properties.gridcode) {
+		layer.bindPopup("<h3>Riesgo de ocurrencia: "+feature.properties.OCU+"</h3>");
+		}
+	}
+	
+	//CONTROL DE CAPAS
+	var baselayers = {
+		"Open Street Maps": osm,
+		"PNOA": pnoa,
+	
+	};
+
+	var overlayers = {
+			"Primer modelo de riesgo": A3,
+			"Segundo modelo de riesgo": C5,
+			
+	};
+		
+	L.control.layers(baselayers, overlayers,{
+		position: 'topright',
+		collapsed:false
+	}).addTo(map);
+	
+	//TITULO
+	var title = L.control({position: "topleft"});
+	title.onAdd = function (map) {
+		var div = L.DomUtil.create('div', 'info');
+		div.innerHTML +=
+		'<h2>Riesgo de incendio por causalidad humana</h2>Clasificaciones realizadas con los dos modelos';
+		return div;
+			};
+	title.addTo(map);
+	
+	//LEYENDA
+	var leyenda = L.control({position: "bottomright"});
+	leyenda.onAdd = function(map) {
+		var div = L.DomUtil.create("div", "info legend");
+		div.innerHTML = '<img src="leyenda.jpg" width="160" height="120">';
+		return div;
+	}
+	leyenda.addTo(map);
+	
+	L.control.scale({options: {position: 'bottomleft',maxWidth: 100,metric: true,imperial: false,updateWhenIdle: false}}).addTo(map);
+	
+	</script>
+	</body> 
+</html> 
