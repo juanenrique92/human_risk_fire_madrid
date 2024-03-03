@@ -30,7 +30,7 @@
 		}
 		.legend {
 			line-height: 18px;
-			color: #555;
+			color: #555555;
 		}
 		.legend I {
 			width: 18px;
@@ -42,141 +42,133 @@
 	</style> 	
 </head>  
 	<body>
-	 <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
-		<div id ="map"> </div>
-	<script type="text/javascript" src="A3.js.geojson"></script>
-	<script type="text/javascript" src="C5.js.geojson"></script>
-	<script>
-	var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'});
-	var map = L.map('map', {
-		center: [40.417183, -3.703517],
-		zoom: 9,
-		zoomControl: false,
-		layers: osm,
-		maxZoom: 18,
-		minZoom: 7,
-	});
-	</script>
-	<script>
-        // Función para crear el control personalizado
-        var DownloadControl = L.Control.extend({
-            onAdd: function(map) {
-                // Crear el botón de descarga
-                var button = L.DomUtil.create('button');
-                button.innerHTML = 'Descargar TFM';
-                
-                // Función para descargar el PDF
-                button.onclick = function() {
-                    // Crear un enlace de descarga
-                    var link = document.createElement('a');
-                    link.href = 'docs/MODELO_DE_RIESGO_DE_INCENDIOS_FORESTALES_POR_CAUSALIDAD_HUMANA_EN_LA_COMUNIDAD_DE_MADRID.pdf'; // Ruta al archivo PDF
-                    link.download = 'MODELO_DE_RIESGO_DE_INCENDIOS_FORESTALES_POR_CAUSALIDAD_HUMANA_EN_LA_COMUNIDAD_DE_MADRID.pdf.pdf'; // Nombre del archivo que se descargará
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                };
-                
-                return button;
-            },
-        });
-	</script>
-	<script>
-	var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-		attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-		dragging: false,
-	}).addTo(map);
-	var C5 = L.geoJson(C5, {
-		style: style,
-		onEachFeature: popup
-	}).addTo(map);
-	
-	var A3 = L.geoJson(A3, {
-		style: style,
-		onEachFeature: popup
-	}).addTo(map);
+		<div id ="map">
+	 		<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+			<script type="text/javascript" src="A3.js.geojson"></script>
+			<script type="text/javascript" src="C5.js.geojson"></script>
+			<script>
+				var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+					attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'});
+				var map = L.map('map', {
+					center: [40.417183, -3.703517],
+					zoom: 9,
+					zoomControl: false,
+					layers: osm,
+					maxZoom: 18,
+					minZoom: 7,
+				});
+			</script>
+			<script>
+        		// Función para crear el control personalizado
+       			var DownloadControl = L.Control.extend({
+            		onAdd: function(map) {
+                	// Crear el botón de descarga
+						var button = L.DomUtil.create('button');
+							button.innerHTML = 'Descargar TFM';
+							
+							// Función para descargar el PDF
+							button.onclick = function() {
+								// Crear un enlace de descarga
+								var link = document.createElement('a');
+								link.href = 'docs/MODELO_DE_RIESGO_DE_INCENDIOS_FORESTALES_POR_CAUSALIDAD_HUMANA_EN_LA_COMUNIDAD_DE_MADRID.pdf'; // Ruta al archivo PDF
+								link.download = 'MODELO_DE_RIESGO_DE_INCENDIOS_FORESTALES_POR_CAUSALIDAD_HUMANA_EN_LA_COMUNIDAD_DE_MADRID.pdf.pdf'; // Nombre del archivo que se descargará
+								document.body.appendChild(link);
+								link.click();
+								document.body.removeChild(link);
+								};
+								return button;
+							},
+						});
 
-	var esri_worldimagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-	});
-	
-	var pnoa = L.tileLayer.wms("http://www.ign.es/wms-inspire/pnoa-ma?SERVICE=WMS&", {
-		layers: "OI.OrthoimageCoverage",
-		format: 'image/jpeg',
-		transparent: false,
-		version: '1.3.0',
-		attribution: "PNOA WMS. Cedido por © Instituto Geográfico Nacional de España"
-	});
-	
-	function getColor(gridcode) {
-		return gridcode == 4 ? '#571845' :
-			gridcode == 3 ? '#c70039' :
-			gridcode == 2 ? '#ff5733' :
-			gridcode == 1 ? '#ffc300' :
-				'#58FA58';
-			}
-	function style(feature) {
-		return {
-		fillColor: getColor(feature.properties.gridcode),
-		weight: 0.5,
-		opacity: 10,
-		color: 'white',
-		fillOpacity: 0.85,
-		};
-	}
-	function popup(feature, layer) {
-		if (feature.properties && feature.properties.gridcode) {
-		layer.bindPopup("<h3>Riesgo de ocurrencia: "+feature.properties.OCU+"</h3>");
-		}
-	}
-	//CONTROL DE CAPAS
-	var baselayers = {
-		"Open Street Maps": osm,
-		"ESRI World Imagery": esri_worldimagery,
-		"PNOA": pnoa,		
-	
-	};
+				// Definimos las capas y las añadimos al mapa
+				var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+					attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',dragging: false,
+					}).addTo(map);
 
-	var overlayers = {
-			"Primer modelo de riesgo": A3,
-			"Segundo modelo de riesgo": C5,
-			
-	};
+				var esri_worldimagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+					attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+					});
+				var pnoa = L.tileLayer.wms("http://www.ign.es/wms-inspire/pnoa-ma?SERVICE=WMS&", {layers: "OI.OrthoimageCoverage",
+					format: 'image/jpeg',
+					transparent: false,
+					version: '1.3.0',
+					attribution: "PNOA WMS. Cedido por © Instituto Geográfico Nacional de España"
+					});
+				var C5 = L.geoJson(C5, {style: style, onEachFeature: popup}).addTo(map);
+				var A3 = L.geoJson(A3, {style: style, onEachFeature: popup}).addTo(map);
+
+				// Construimos el control de capas (base y superpuestas) y añadimos las que queremos que se puedan mostrar
+				var baselayers = {
+					"Open Street Maps": osm,
+					"ESRI World Imagery": esri_worldimagery,
+					"PNOA": pnoa,		
+				};
+				var overlayers = {
+					"Primer modelo de riesgo": A3,
+					"Segundo modelo de riesgo": C5,	
+				};
+				L.control.layers(baselayers, overlayers,{
+					position: 'topright',
+					collapsed:false
+				}).addTo(map);
+
+				// Deseleccionamos el modelo C5 de las capas mostradas
+				map.removeLayer(C5);
+
+				// Definimos los colores de los grids
+				function getColor(gridcode) {
+					return gridcode == 4 ? '#571845' :
+						gridcode == 3 ? '#c70039' :
+						gridcode == 2 ? '#ff5733' :
+						gridcode == 1 ? '#ffc300' :
+							'#58FA58';
+						}
+
+				// Aplicamos los colores
+				function style(feature) {
+					return {
+					fillColor: getColor(feature.properties.gridcode),
+					weight: 0.5,
+					opacity: 10,
+					color: 'white',
+					fillOpacity: 0.85,
+					};
+				}
+
+				// Añadimos un pop-up con la info del riesgo en cada grid
+				function popup(feature, layer) {
+					if (feature.properties && feature.properties.gridcode) {
+					layer.bindPopup("<h3>Riesgo de ocurrencia: "+feature.properties.OCU+"</h3>");
+					}
+				}
+
+				//Añadimos un titulo a nuestra web
+				var title = L.control({position: "topleft"});
+					title.onAdd = function (map) {
+						var div = L.DomUtil.create('div', 'info');
+							div.innerHTML +='<h2>Riesgo de incendio por causalidad humana</h2>Modelos realizados mediante GWLR';
+						return div;
+						};
+					title.addTo(map);
+
+				// Agregamos debajo del titulo el boton de descarga pdf
+				new DownloadControl({ position: 'topleft' }).addTo(map);
 		
-	L.control.layers(baselayers, overlayers,{
-		position: 'topright',
-		collapsed:false
-	}).addTo(map);
-	// Quitar temporalmente la capa A3 del mapa
-	map.removeLayer(C5);
-
-	//TITULO
-	var title = L.control({position: "topleft"});
-	title.onAdd = function (map) {
-		var div = L.DomUtil.create('div', 'info');
-		div.innerHTML +=
-		'<h2>Riesgo de incendio por causalidad humana</h2>Modelos realizados mediante GWLR';
-		return div;
-			};
-	title.addTo(map);
-	// Agregar control personalizado al mapa
-	new DownloadControl({ position: 'topleft' }).addTo(map);
-	
-	//LEYENDA
-	var leyenda = L.control({position: "bottomright"});
-
-	leyenda.onAdd = function(map) {
-		var div = L.DomUtil.create("div", "info legend");
-		div.innerHTML = '<img src="leyend.jpg" width="160" height="120">';
-		return div;}
-	leyenda.addTo(map);
-	L.control.scale({options: {
-		position: 'bottomleft',
-		maxWidth: 100,
-		metric: true,
-		imperial: false,
-		updateWhenIdle: false
-	}}).addTo(map);
-	</script>
-	</body> 
+				// Añadimos una leyenda como imagen
+				var leyenda = L.control({position: "bottomright"});
+					leyenda.onAdd = function(map) {
+						var div = L.DomUtil.create("div", "info legend");
+						div.innerHTML = '<img src="leyend.jpg" width="160" height="120">';
+						return div;}
+					leyenda.addTo(map);
+					L.control.scale({options: {
+						position: 'bottomleft',
+						maxWidth: 100,
+						metric: true,
+						imperial: false,
+						updateWhenIdle: false
+					}}).addTo(map);
+			</script>
+		</body>
+	</div>
 </html> 
