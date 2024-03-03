@@ -45,7 +45,7 @@
 	 <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
 		<div id ="map"> </div>
 	<script type="text/javascript" src="A3.js.geojson"></script>
-	<script type="text/javascript" src="C5.js.geojson"></script>		
+	<script type="text/javascript" src="C5.js.geojson"></script>
 	<script>
 	var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'});
@@ -57,12 +57,35 @@
 		maxZoom: 18,
 		minZoom: 7,
 	});
-	
+	</script>
+	<script>
+        // Función para crear el control personalizado
+        var DownloadControl = L.Control.extend({
+            onAdd: function(map) {
+                // Crear el botón de descarga
+                var button = L.DomUtil.create('button');
+                button.innerHTML = 'Descargar TFM';
+                
+                // Función para descargar el PDF
+                button.onclick = function() {
+                    // Crear un enlace de descarga
+                    var link = document.createElement('a');
+                    link.href = 'docs/MODELO_DE_RIESGO_DE_INCENDIOS_FORESTALES_POR_CAUSALIDAD_HUMANA_EN_LA_COMUNIDAD_DE_MADRID.pdf'; // Ruta al archivo PDF
+                    link.download = 'MODELO_DE_RIESGO_DE_INCENDIOS_FORESTALES_POR_CAUSALIDAD_HUMANA_EN_LA_COMUNIDAD_DE_MADRID.pdf.pdf'; // Nombre del archivo que se descargará
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                };
+                
+                return button;
+            },
+        });
+	</script>
+	<script>
 	var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 		attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
 		dragging: false,
 	}).addTo(map);
-	
 	var C5 = L.geoJson(C5, {
 		style: style,
 		onEachFeature: popup
@@ -124,7 +147,6 @@
 		position: 'topright',
 		collapsed:false
 	}).addTo(map);
-
 	// Quitar temporalmente la capa A3 del mapa
 	map.removeLayer(C5);
 
@@ -137,6 +159,8 @@
 		return div;
 			};
 	title.addTo(map);
+	// Agregar control personalizado al mapa
+	new DownloadControl({ position: 'topleft' }).addTo(map);
 	
 	//LEYENDA
 	var leyenda = L.control({position: "bottomright"});
