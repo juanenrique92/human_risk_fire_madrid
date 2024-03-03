@@ -25,7 +25,7 @@
 		}
 		.info h2 {
 			margin: 0 0 5px;
-			color: #777;
+			color: #000f39;
 			font-family: 'Geologica', sans-serif; /* Cambiada la fuente a Geologica */
 		}
 		.legend {
@@ -55,7 +55,7 @@
 		zoomControl: false,
 		layers: osm,
 		maxZoom: 18,
-		minZoom: 8,
+		minZoom: 7,
 	});
 	
 	var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -72,11 +72,15 @@
 		style: style,
 		onEachFeature: popup
 	}).addTo(map);
+
+	var esri_worldimagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+	});
 	
 	var pnoa = L.tileLayer.wms("http://www.ign.es/wms-inspire/pnoa-ma?SERVICE=WMS&", {
 		layers: "OI.OrthoimageCoverage",
 		format: 'image/jpeg',
-		transparent: true,
+		transparent: false,
 		version: '1.3.0',
 		attribution: "PNOA WMS. Cedido por © Instituto Geográfico Nacional de España"
 	});
@@ -94,7 +98,7 @@
 		weight: 0.5,
 		opacity: 10,
 		color: 'white',
-		fillOpacity: 0.7,
+		fillOpacity: 0.85,
 		};
 	}
 	function popup(feature, layer) {
@@ -102,11 +106,11 @@
 		layer.bindPopup("<h3>Riesgo de ocurrencia: "+feature.properties.OCU+"</h3>");
 		}
 	}
-	
 	//CONTROL DE CAPAS
 	var baselayers = {
 		"Open Street Maps": osm,
-		"PNOA": pnoa,
+		"ESRI World Imagery": esri_worldimagery,
+		"PNOA": pnoa,		
 	
 	};
 
@@ -120,28 +124,35 @@
 		position: 'topright',
 		collapsed:false
 	}).addTo(map);
-	
+
+	// Quitar temporalmente la capa A3 del mapa
+	map.removeLayer(C5);
+
 	//TITULO
 	var title = L.control({position: "topleft"});
 	title.onAdd = function (map) {
 		var div = L.DomUtil.create('div', 'info');
 		div.innerHTML +=
-		'<h2>Riesgo de incendio por causalidad humana</h2>Clasificaciones realizadas con los dos modelos';
+		'<h2>Riesgo de incendio por causalidad humana</h2>Modelos realizados mediante GWLR';
 		return div;
 			};
 	title.addTo(map);
 	
 	//LEYENDA
 	var leyenda = L.control({position: "bottomright"});
+
 	leyenda.onAdd = function(map) {
 		var div = L.DomUtil.create("div", "info legend");
 		div.innerHTML = '<img src="leyend.jpg" width="160" height="120">';
-		return div;
-	}
+		return div;}
 	leyenda.addTo(map);
-	
-	L.control.scale({options: {position: 'bottomleft',maxWidth: 100,metric: true,imperial: false,updateWhenIdle: false}}).addTo(map);
-	
+	L.control.scale({options: {
+		position: 'bottomleft',
+		maxWidth: 100,
+		metric: true,
+		imperial: false,
+		updateWhenIdle: false
+	}}).addTo(map);
 	</script>
 	</body> 
 </html> 
